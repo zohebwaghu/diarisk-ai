@@ -3,6 +3,7 @@ const healthBtn = document.getElementById("healthBtn");
 const healthStatus = document.getElementById("healthStatus");
 const analyzeForm = document.getElementById("analyzeForm");
 const analysisOutput = document.getElementById("analysisOutput");
+const demoBtn = document.getElementById("demoBtn");
 const summarySection = document.getElementById("summarySection");
 const riskCards = document.getElementById("riskCards");
 const actionPlan = document.getElementById("actionPlan");
@@ -45,30 +46,38 @@ healthBtn.addEventListener("click", async () => {
 
 analyzeForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  analysisOutput.textContent = "Running analysis...";
-  summarySection.classList.add("hidden");
-  riskCards.innerHTML = "";
-  actionPlan.innerHTML = "";
-  summaryMeta.textContent = "";
-  labInsights.innerHTML = "";
-  agentTrace.innerHTML = "";
-  riskTrend.innerHTML = "";
-  trendMeta.textContent = "—";
-  vitalsGrid.innerHTML = "";
-
   const labReport = document.getElementById("labReport").files[0];
   const retinalImage = document.getElementById("retinalImage").files[0];
   const cognitiveNotes = document.getElementById("cognitiveNotes").value.trim();
 
   if (!labReport) {
-    analysisOutput.textContent = "Lab report is required.";
+    analysisOutput.textContent = "Lab report is required. Use the demo button if you do not have one.";
     return;
   }
 
+  await submitAnalysis({ labFile: labReport, retinalFile: retinalImage, cognitiveNotes });
+});
+
+demoBtn.addEventListener("click", async () => {
+  analysisOutput.textContent = "Generating demo lab report...";
+  const retinalImage = document.getElementById("retinalImage").files[0];
+  const cognitiveNotes = document.getElementById("cognitiveNotes").value.trim();
+  try {
+    const demoLab = await buildDemoLabFile();
+    await submitAnalysis({ labFile: demoLab, retinalFile: retinalImage, cognitiveNotes });
+  } catch (err) {
+    analysisOutput.textContent = `Error: ${err.message}`;
+  }
+});
+
+const submitAnalysis = async ({ labFile, retinalFile, cognitiveNotes }) => {
+  resetDashboard();
+  analysisOutput.textContent = "Running analysis...";
+
   const formData = new FormData();
-  formData.append("lab_report", labReport);
-  if (retinalImage) {
-    formData.append("retinal_image", retinalImage);
+  formData.append("lab_report", labFile);
+  if (retinalFile) {
+    formData.append("retinal_image", retinalFile);
   }
   if (cognitiveNotes) {
     formData.append("cognitive_notes", cognitiveNotes);
@@ -89,7 +98,55 @@ analyzeForm.addEventListener("submit", async (event) => {
   } catch (err) {
     analysisOutput.textContent = `Error: ${err.message}`;
   }
-});
+};
+
+const resetDashboard = () => {
+  summarySection.classList.add("hidden");
+  riskCards.innerHTML = "";
+  actionPlan.innerHTML = "";
+  summaryMeta.textContent = "";
+  labInsights.innerHTML = "";
+  agentTrace.innerHTML = "";
+  riskTrend.innerHTML = "";
+  trendMeta.textContent = "—";
+  vitalsGrid.innerHTML = "";
+};
+
+const buildDemoLabFile = () => {
+  const canvas = document.createElement("canvas");
+  canvas.width = 900;
+  canvas.height = 600;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#111111";
+  ctx.font = "20px Arial";
+  const lines = [
+    "Lab Report Summary",
+    "A1C: 7.8%",
+    "Fasting Glucose: 142 mg/dL",
+    "eGFR: 72 mL/min/1.73m2",
+    "Creatinine: 1.1 mg/dL",
+    "LDL: 132 mg/dL",
+    "HDL: 46 mg/dL",
+    "Triglycerides: 185 mg/dL",
+    "Urine Albumin: 45 mg/g",
+    "Blood Pressure: 142/88",
+  ];
+  lines.forEach((line, index) => {
+    ctx.fillText(line, 40, 60 + index * 40);
+  });
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error("Failed to generate demo lab report."));
+        return;
+      }
+      resolve(new File([blob], "demo_lab_report.png", { type: "image/png" }));
+    }, "image/png");
+  });
+};
 
 refreshHistory.addEventListener("click", async () => {
   historyOutput.textContent = "Loading history...";

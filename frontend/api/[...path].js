@@ -1,5 +1,5 @@
 module.exports = async (req, res) => {
-  const backendUrl = process.env.BACKEND_URL;
+  const backendUrl = (process.env.BACKEND_URL || "").trim().replace(/\/+$/, "");
   if (!backendUrl) {
     res.statusCode = 500;
     res.setHeader("Content-Type", "application/json");
@@ -7,8 +7,10 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const targetPath = req.url.replace(/^\/api/, "");
-  const targetUrl = `${backendUrl}${targetPath}`;
+  const url = new URL(req.url, "http://localhost");
+  const isHealth = url.pathname === "/api/health";
+  const targetPath = isHealth ? "/health" : url.pathname;
+  const targetUrl = `${backendUrl}${targetPath}${url.search}`;
   const headers = { ...req.headers };
   delete headers.host;
 
@@ -31,6 +33,12 @@ module.exports = async (req, res) => {
   } catch (error) {
     res.statusCode = 502;
     res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify({ error: String(error) }));
+    res.end(
+      JSON.stringify({
+        error: "Proxy request failed.",
+        detail: String(error),
+        target: targetUrl,
+      })
+    );
   }
 };
