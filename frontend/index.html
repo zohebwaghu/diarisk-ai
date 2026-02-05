@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DiaRisk AI Demo</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>DiaRisk AI Demo</h1>
+        <p>Local-only demo client for the FastAPI backend.</p>
+      </header>
+
+      <section class="card">
+        <h2>Backend Connection</h2>
+        <label class="field">
+          API Base URL
+          <input id="apiBase" type="text" value="http://localhost:8000" />
+        </label>
+        <div class="actions">
+          <button id="healthBtn" type="button">Check Health</button>
+          <span id="healthStatus" class="status"></span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Run Analysis</h2>
+        <form id="analyzeForm">
+          <label class="field">
+            Lab Report (PDF/JPG)
+            <input id="labReport" type="file" accept=".pdf,.jpg,.jpeg,.png" required />
+          </label>
+          <label class="field">
+            Retinal Image (optional)
+            <input id="retinalImage" type="file" accept=".jpg,.jpeg,.png" />
+          </label>
+          <button type="submit">Analyze</button>
+        </form>
+        <div id="summarySection" class="summary hidden">
+          <div class="summary-header">
+            <h3>Risk Summary</h3>
+            <span id="summaryMeta" class="summary-meta"></span>
+          </div>
+          <div id="riskCards" class="risk-grid"></div>
+          <div class="action-plan">
+            <h3>Action Plan</h3>
+            <div id="actionPlan" class="action-list"></div>
+          </div>
+        </div>
+        <div id="analysisOutput" class="output"></div>
+      </section>
+
+      <section class="card">
+        <h2>Recent Runs</h2>
+        <div class="actions">
+          <button id="refreshHistory" type="button">Refresh History</button>
+        </div>
+        <div id="historyOutput" class="output"></div>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

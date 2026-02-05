@@ -1,0 +1,24 @@
+.DS_Store
+.env
+.venv/
+__pycache__/
+*.pyc
+.vscode/
+
+backend/data/
+backend/.env
+
+node_modules/
+
+*.zip
+*.csv
+aptos2019-blindness-detection/
+Diabetic Retinopathy Image Dataset/
+Messidor-2.001
+Messidor-2.002
+Messidor-2.003
+Messidor-2.004
+Chronic KIdney Disease dataset.zip
+Dementia Patient Health Dataset.zip
+diabetes health indicators dataset.zip
+diabetes health indicators dataset/
