@@ -1,0 +1,60 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 438 >>
+stream
+BT
+/F1 18 Tf
+72 720 Td
+(Lab Report Summary) Tj
+0 -28 Td
+(Patient: Demo Sample) Tj
+0 -28 Td
+(Date: 2026-02-05) Tj
+0 -28 Td
+() Tj
+0 -28 Td
+(A1C: 7.8%) Tj
+0 -28 Td
+(Fasting Glucose: 142 mg/dL) Tj
+0 -28 Td
+(eGFR: 72 mL/min/1.73m2) Tj
+0 -28 Td
+(Creatinine: 1.1 mg/dL) Tj
+0 -28 Td
+(LDL: 132 mg/dL) Tj
+0 -28 Td
+(HDL: 46 mg/dL) Tj
+0 -28 Td
+(Triglycerides: 185 mg/dL) Tj
+0 -28 Td
+(Urine Albumin: 45 mg/g) Tj
+0 -28 Td
+(Blood Pressure: 142/88) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000730 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+800
+%%EOF

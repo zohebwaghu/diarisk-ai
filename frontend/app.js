@@ -32,17 +32,22 @@ const setStatus = (text, ok = true) => {
   healthStatus.style.color = ok ? "#16a34a" : "#dc2626";
 };
 
-healthBtn.addEventListener("click", async () => {
+const checkHealth = async () => {
   setStatus("Checking...");
   try {
     const res = await fetch(buildUrl("/api/health"));
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    setStatus(`OK (${data.status})`, true);
+    setStatus(`Connected (${data.status})`, true);
+    return true;
   } catch (err) {
-    setStatus(`Error: ${err.message}`, false);
+    setStatus("Disconnected", false);
+    return false;
   }
-});
+};
+
+healthBtn.addEventListener("click", checkHealth);
+apiBaseInput.addEventListener("change", checkHealth);
 
 analyzeForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -55,7 +60,11 @@ analyzeForm.addEventListener("submit", async (event) => {
     return;
   }
 
-  await submitAnalysis({ labFile: labReport, retinalFile: retinalImage, cognitiveNotes });
+  await submitAnalysis({
+    labFile: labReport,
+    retinalFile: retinalImage,
+    cognitiveNotes,
+  });
 });
 
 demoBtn.addEventListener("click", async () => {
@@ -64,7 +73,11 @@ demoBtn.addEventListener("click", async () => {
   const cognitiveNotes = document.getElementById("cognitiveNotes").value.trim();
   try {
     const demoLab = await buildDemoLabFile();
-    await submitAnalysis({ labFile: demoLab, retinalFile: retinalImage, cognitiveNotes });
+    await submitAnalysis({
+      labFile: demoLab,
+      retinalFile: retinalImage,
+      cognitiveNotes,
+    });
   } catch (err) {
     analysisOutput.textContent = `Error: ${err.message}`;
   }
@@ -161,6 +174,7 @@ refreshHistory.addEventListener("click", async () => {
 });
 
 refreshHistory.click();
+checkHealth();
 
 const renderSummary = (data) => {
   if (!data || !data.risk_scores) return;
@@ -233,12 +247,13 @@ const renderTrend = (riskScores) => {
     .filter((value) => typeof value === "number");
   const average = values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
   trendMeta.textContent = `${Math.round(average)}% avg`;
+
   const bars = Array.from({ length: 24 }).map((_, i) => {
     const wave = Math.sin(i / 3) * 8;
     const base = average || 20;
-    const value = Math.max(8, Math.min(100, base + wave + (i % 5) * 0.6));
-    return value;
+    return Math.max(8, Math.min(100, base + wave + (i % 5) * 0.6));
   });
+
   riskTrend.innerHTML = bars
     .map((value) => `<div class="spark-bar" style="height:${value}%;"></div>`)
     .join("");
