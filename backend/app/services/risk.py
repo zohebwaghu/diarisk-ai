@@ -1,11 +1,16 @@
 from __future__ import annotations
 
-from app.schemas import ComplicationRisk, LabValues, RetinalResult, RiskScores
+from app.schemas import CognitiveResult, ComplicationRisk, LabValues, RetinalResult, RiskScores
 
 
 class RiskScorer:
-    def score(self, labs: LabValues, retinal: RetinalResult | None) -> RiskScores:
-        dementia = self._score_dementia(labs)
+    def score(
+        self,
+        labs: LabValues,
+        retinal: RetinalResult | None,
+        cognitive: CognitiveResult | None = None,
+    ) -> RiskScores:
+        dementia = self._score_dementia(labs, cognitive)
         cvd = self._score_cvd(labs)
         nephro = self._score_nephropathy(labs)
         ret = self._score_retinopathy(labs, retinal)
@@ -18,7 +23,7 @@ class RiskScorer:
             neuropathy=neuro,
         )
 
-    def _score_dementia(self, labs: LabValues) -> ComplicationRisk:
+    def _score_dementia(self, labs: LabValues, cognitive: CognitiveResult | None) -> ComplicationRisk:
         score = 20.0
         factors = []
         if labs.a1c is not None:
@@ -31,6 +36,13 @@ class RiskScorer:
         if labs.systolic_bp is not None and labs.systolic_bp >= 140:
             score += 8
             factors.append("Elevated systolic blood pressure")
+        if cognitive and cognitive.score is not None:
+            if cognitive.score <= 2:
+                score += 12
+                factors.append("Low cognitive screening score")
+            elif cognitive.score <= 3:
+                score += 8
+                factors.append("Borderline cognitive screening score")
         return self._pack(score, factors)
 
     def _score_cvd(self, labs: LabValues) -> ComplicationRisk:

@@ -7,55 +7,101 @@
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <main class="container">
-      <header>
-        <h1>DiaRisk AI Demo</h1>
-        <p>Local-only demo client for the FastAPI backend.</p>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <h1>DiaRisk AI</h1>
+          <p>Diabetes complication intelligence dashboard</p>
+        </div>
+        <div class="status-pill" id="healthStatus">Disconnected</div>
       </header>
 
-      <section class="card">
-        <h2>Backend Connection</h2>
-        <label class="field">
-          API Base URL
-          <input id="apiBase" type="text" value="http://localhost:8000" />
-        </label>
-        <div class="actions">
-          <button id="healthBtn" type="button">Check Health</button>
-          <span id="healthStatus" class="status"></span>
+      <section class="controls card">
+        <div class="controls-header">
+          <h2>Run Analysis</h2>
+          <div class="actions">
+            <button id="healthBtn" type="button">Check Health</button>
+          </div>
         </div>
-      </section>
-
-      <section class="card">
-        <h2>Run Analysis</h2>
         <form id="analyzeForm">
-          <label class="field">
-            Lab Report (PDF/JPG)
-            <input id="labReport" type="file" accept=".pdf,.jpg,.jpeg,.png" required />
-          </label>
-          <label class="field">
-            Retinal Image (optional)
-            <input id="retinalImage" type="file" accept=".jpg,.jpeg,.png" />
-          </label>
-          <button type="submit">Analyze</button>
+          <div class="controls-grid">
+            <label class="field">
+              API Base URL
+              <input id="apiBase" type="text" value="" placeholder="Leave blank to use Vercel proxy, or set http://localhost:8000" />
+            </label>
+            <label class="field">
+              Lab Report (PDF/JPG)
+              <input id="labReport" type="file" accept=".pdf,.jpg,.jpeg,.png" required />
+            </label>
+            <label class="field">
+              Retinal Image (optional)
+              <input id="retinalImage" type="file" accept=".jpg,.jpeg,.png" />
+            </label>
+            <label class="field">
+              Cognitive Notes (optional)
+              <textarea id="cognitiveNotes" rows="3" placeholder="E.g., Mini-Cog: recalled 2/3 words, clock draw with minor errors."></textarea>
+            </label>
+          </div>
+          <div class="controls-actions">
+            <button type="submit">Analyze</button>
+            <button id="refreshHistory" type="button" class="ghost">Refresh History</button>
+          </div>
         </form>
-        <div id="summarySection" class="summary hidden">
-          <div class="summary-header">
-            <h3>Risk Summary</h3>
-            <span id="summaryMeta" class="summary-meta"></span>
-          </div>
-          <div id="riskCards" class="risk-grid"></div>
-          <div class="action-plan">
-            <h3>Action Plan</h3>
-            <div id="actionPlan" class="action-list"></div>
-          </div>
-        </div>
-        <div id="analysisOutput" class="output"></div>
+        <details class="debug">
+          <summary>Raw response</summary>
+          <div id="analysisOutput" class="output"></div>
+        </details>
       </section>
 
-      <section class="card">
-        <h2>Recent Runs</h2>
-        <div class="actions">
-          <button id="refreshHistory" type="button">Refresh History</button>
+      <section class="dashboard">
+        <div class="tile tile-hero">
+          <div class="hero-text">
+            <p class="eyebrow">Hi, Emma!</p>
+            <h2>Let’s measure your complication risk</h2>
+            <p class="subtle">Personalized summary based on labs, retinal scan, and cognition.</p>
+          </div>
+          <div id="summarySection" class="summary hidden">
+            <div class="summary-header">
+              <h3>Risk Summary</h3>
+              <span id="summaryMeta" class="summary-meta"></span>
+            </div>
+            <div id="labInsights" class="lab-insights"></div>
+            <div id="riskCards" class="risk-grid"></div>
+            <div class="action-plan">
+              <h3>Action Plan</h3>
+              <div id="actionPlan" class="action-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tile tile-chart">
+          <div class="tile-header">
+            <h3>Risk Volatility</h3>
+            <span id="trendMeta" class="metric">—</span>
+          </div>
+          <div id="riskTrend" class="sparkline"></div>
+        </div>
+
+        <div class="tile tile-wave">
+          <div class="tile-header">
+            <h3>Agent Trace</h3>
+            <span class="metric">Live pipeline</span>
+          </div>
+          <div id="agentTrace" class="trace-list"></div>
+        </div>
+
+        <div class="tile tile-vitals">
+          <div class="tile-header">
+            <h3>Vitals</h3>
+            <span class="metric">Latest</span>
+          </div>
+          <div id="vitalsGrid" class="vitals-grid"></div>
+        </div>
+      </section>
+
+      <section class="card history">
+        <div class="history-header">
+          <h2>Recent Runs</h2>
         </div>
         <div id="historyOutput" class="output"></div>
       </section>

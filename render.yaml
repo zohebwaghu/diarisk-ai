@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: diarisk-backend
+    env: python
+    plan: free
+    rootDir: backend
+    buildCommand: |
+      apt-get update && apt-get install -y tesseract-ocr poppler-utils
+      pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: OFFLINE_ONLY
+        value: "true"
+      - key: ENABLE_TEXT_LLM
+        value: "false"
+      - key: ENABLE_RETINAL
+        value: "false"
